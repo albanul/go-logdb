@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-After reading Mark Kleppmann's book, "Designing Data-Intensive Applications," I felt inspired to develop my own
+After reading Mark Kleppmann's book, "Designing Data-Intensive Applications", I felt inspired to develop my own
 append-only file-based database. This database is designed to efficiently store and retrieve key-value pairs.
 
 ## Features
