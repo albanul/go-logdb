@@ -32,7 +32,7 @@ Instructions for how to use the project and example code snippets go here.
 
 ## Documentation \[WIP\]
 
-Detailed documentation and API reference can be found [here](link).
+Detailed documentation and API reference can be found [here](https://github.com/albanul/go-logdb/wiki).
 
 ## Contributing
 
