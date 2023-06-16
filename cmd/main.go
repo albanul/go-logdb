@@ -38,52 +38,9 @@ func main() {
 		breakTheLoop := false
 		switch choice {
 		case 1:
-			var key, value string
-			fmt.Print("Please enter key: ")
-			_, err := fmt.Scanf("%s\n", &key)
-			if err != nil {
-				fmt.Println("Something went wrong! Please start over.")
-				fmt.Println()
-				break
-			}
-
-			fmt.Print("Please enter value: ")
-			scanner := bufio.NewScanner(os.Stdin)
-			ok := scanner.Scan()
-			if !ok {
-				fmt.Println("Something went wrong! Please start over.")
-				fmt.Println()
-				break
-			}
-
-			value = scanner.Text()
-
-			err = addToDb(key, value)
-
-			if err != nil {
-				fmt.Println("Something went wrong! Please start over.")
-				fmt.Println()
-			}
-
-			fmt.Printf("(%s, %s) is successfully added to the database!\n\n", key, value)
+			addToDbOption()
 		case 2:
-			var key string
-			fmt.Print("Please enter key: ")
-			_, err := fmt.Scanf("%s\n", &key)
-			if err != nil {
-				fmt.Println("Something went wrong! Please start over.")
-				fmt.Println()
-				break
-			}
-
-			value, err := getFromDb(key)
-
-			if err != nil {
-				fmt.Printf("%s. Please start over.\n\n", err.Error())
-				break
-			}
-
-			fmt.Printf("%v\n\n", value)
+			getFromDbOption()
 		case 3:
 			breakTheLoop = true
 		}
@@ -94,6 +51,57 @@ func main() {
 	}
 
 	fmt.Println("Good bye!")
+}
+
+func addToDbOption() {
+	var key, value string
+	fmt.Print("Please enter key: ")
+	_, err := fmt.Scanf("%s\n", &key)
+	if err != nil {
+		fmt.Println("Something went wrong! Please start over.")
+		fmt.Println()
+		return
+	}
+
+	fmt.Print("Please enter value: ")
+	scanner := bufio.NewScanner(os.Stdin)
+	ok := scanner.Scan()
+	if !ok {
+		fmt.Println("Something went wrong! Please start over.")
+		fmt.Println()
+		return
+	}
+
+	value = scanner.Text()
+
+	err = addToDb(key, value)
+
+	if err != nil {
+		fmt.Println("Something went wrong! Please start over.")
+		fmt.Println()
+	}
+
+	fmt.Printf("(%s, %s) is successfully added to the database!\n\n", key, value)
+}
+
+func getFromDbOption() {
+	var key string
+	fmt.Print("Please enter key: ")
+	_, err := fmt.Scanf("%s\n", &key)
+	if err != nil {
+		fmt.Println("Something went wrong! Please start over.")
+		fmt.Println()
+		return
+	}
+
+	value, err := getFromDb(key)
+
+	if err != nil {
+		fmt.Printf("%s. Please start over.\n\n", err.Error())
+		return
+	}
+
+	fmt.Printf("%v\n\n", value)
 }
 
 func addToDb(key, value string) error {
