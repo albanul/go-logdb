@@ -8,7 +8,7 @@ append-only file-based database. This database is designed to efficiently store 
 ## Features
 
 - [x] Store key-value data in database
-- [ ] Fetch data by a key
+- [X] Fetch data by a key
 - [ ] In-memory index
 - [ ] Binary format
 - [ ] Database compaction

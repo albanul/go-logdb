@@ -1,14 +1,22 @@
 package main
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
 	"os"
+	"strings"
 )
 
 type KeyValue struct {
 	key   string
 	value string
 }
+
+var (
+	KeyNotFoundError = errors.New("key was not found")
+	HashIndex        = make(map[string]int64)
+)
 
 func main() {
 	for {
@@ -36,22 +44,46 @@ func main() {
 			if err != nil {
 				fmt.Println("Something went wrong! Please start over.")
 				fmt.Println()
+				break
 			}
 
 			fmt.Print("Please enter value: ")
-			_, err = fmt.Scanf("%s\n", &value)
+			scanner := bufio.NewScanner(os.Stdin)
+			ok := scanner.Scan()
+			if !ok {
+				fmt.Println("Something went wrong! Please start over.")
+				fmt.Println()
+				break
+			}
+
+			value = scanner.Text()
+
+			err = addToDb(key, value)
+
 			if err != nil {
 				fmt.Println("Something went wrong! Please start over.")
 				fmt.Println()
 			}
 
-			//todo: add to the db
-			addToDb(key, value)
-
 			fmt.Printf("(%s, %s) is successfully added to the database!\n\n", key, value)
-		// todo: prompt for a key-value pair
 		case 2:
-		//todo: prompt for a key
+			var key string
+			fmt.Print("Please enter key: ")
+			_, err := fmt.Scanf("%s\n", &key)
+			if err != nil {
+				fmt.Println("Something went wrong! Please start over.")
+				fmt.Println()
+				break
+			}
+
+			value, err := getFromDb(key)
+
+			if err != nil {
+				fmt.Printf("%s. Please start over.\n\n", err.Error())
+				break
+			}
+
+			fmt.Printf("%v\n\n", value)
 		case 3:
 			breakTheLoop = true
 		}
@@ -64,29 +96,71 @@ func main() {
 	fmt.Println("Good bye!")
 }
 
-func addToDb(key, value string) {
-	file, err := os.OpenFile("database", os.O_CREATE|os.O_APPEND, 0755)
+func addToDb(key, value string) error {
+	file, err := os.OpenFile("database", os.O_CREATE|os.O_WRONLY, 0755)
 	defer file.Close()
 
 	if err != nil {
-		panic("Can't open database file!\n" + err.Error())
+		return err
 	}
 
-	s := fmt.Sprintf("\n%s,%s", key, value)
+	// getFromDb expect to have \n at the end of the last record
+	// todo: think if that needs to be changed ?
+	s := fmt.Sprintf("%s,%s\n", key, value)
 
 	stat, err := file.Stat()
 
 	if err != nil {
-		panic("Can't get file info!\n" + err.Error())
+		return err
 	}
 
-	if stat.Size() == 0 {
-		s = fmt.Sprintf("%s,%s", key, value)
+	var currentPosition int64
+
+	currentPosition, err = file.Seek(stat.Size(), 0)
+	if err != nil {
+		return err
 	}
 
 	_, err = file.WriteString(s)
 
+	HashIndex[key] = currentPosition
+
 	if err != nil {
-		panic("Can't write to database file!\n" + err.Error())
+		return err
 	}
+
+	return nil
+}
+
+func getFromDb(key string) (value string, err error) {
+	file, err := os.OpenFile("database", os.O_RDONLY, 0755)
+	defer file.Close()
+
+	offset, ok := HashIndex[key]
+
+	if !ok {
+		err = KeyNotFoundError
+		return
+	}
+
+	_, err = file.Seek(offset, 0)
+
+	if err != nil {
+		return
+	}
+
+	reader := bufio.NewReader(file)
+
+	line, err := reader.ReadString('\n')
+
+	if err != nil {
+		return
+	}
+
+	split := strings.Split(line, ",")
+
+	value = split[1]
+	value = strings.TrimRight(value, "\n")
+
+	return
 }
