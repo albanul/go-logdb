@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/albanul/go-logdb/internal/hash_index"
 	"os"
 	"strings"
 )
@@ -15,10 +16,18 @@ type KeyValue struct {
 
 var (
 	KeyNotFoundError = errors.New("key was not found")
-	HashIndex        = make(map[string]int64)
+	HashIndex        *hash_index.HashIndex
 )
 
 func main() {
+	hi, err := hash_index.NewFromFile("index")
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("shutting down...")
+		return
+	}
+	HashIndex = hi
+
 	for {
 		fmt.Println("Please select an option:")
 		fmt.Println("1. insert a new record")
@@ -107,7 +116,6 @@ func getFromDbOption() {
 func addToDb(key, value string) error {
 	file, err := os.OpenFile("database", os.O_CREATE|os.O_WRONLY, 0755)
 	defer file.Close()
-
 	if err != nil {
 		return err
 	}
@@ -117,7 +125,6 @@ func addToDb(key, value string) error {
 	s := fmt.Sprintf("%s,%s\n", key, value)
 
 	stat, err := file.Stat()
-
 	if err != nil {
 		return err
 	}
@@ -130,9 +137,12 @@ func addToDb(key, value string) error {
 	}
 
 	_, err = file.WriteString(s)
+	if err != nil {
+		return err
+	}
 
-	HashIndex[key] = currentPosition
-
+	HashIndex.SetOffset(key, currentPosition)
+	err = HashIndex.FlushToFile()
 	if err != nil {
 		return err
 	}
@@ -144,7 +154,7 @@ func getFromDb(key string) (value string, err error) {
 	file, err := os.OpenFile("database", os.O_RDONLY, 0755)
 	defer file.Close()
 
-	offset, ok := HashIndex[key]
+	offset, ok := HashIndex.GetOffset(key)
 
 	if !ok {
 		err = KeyNotFoundError

@@ -8,12 +8,12 @@ append-only file-based database. This database is designed to efficiently store 
 ## Features
 
 - [x] Store key-value data in database
-- [X] Fetch data by a key
-- [ ] In-memory index
+- [x] Fetch data by a key
+- [x] In-memory index
 - [ ] Binary format
 - [ ] Database compaction
 - [ ] Delete a record
-- [ ] Store index on a disk
+- [x] Store index on a disk
 - [ ] Index rebuild
 - [ ] Partially written records
 - [ ] Concurrency control
