@@ -36,7 +36,8 @@ func main() {
 		fmt.Println("Please select an option:")
 		fmt.Println("1. insert a new record")
 		fmt.Println("2. get a record by a key")
-		fmt.Println("3. quit")
+		fmt.Println("3. rebuild hash index")
+		fmt.Println("4. quit")
 		fmt.Println()
 
 		var choice int
@@ -55,6 +56,8 @@ func main() {
 		case 2:
 			getFromDbOption()
 		case 3:
+			rebuildHashIndexOption()
+		case 4:
 			breakTheLoop = true
 		}
 
@@ -115,6 +118,16 @@ func getFromDbOption() {
 	}
 
 	fmt.Printf("%v\n\n", value)
+}
+
+func rebuildHashIndexOption() {
+	fmt.Println("Starting rebuilding the hash index...")
+	err := HashIndex.RebuildIndexFromFile(databaseFilename)
+	if err != nil {
+		fmt.Println("Something went wrong! Please start over.")
+		return
+	}
+	fmt.Println("The index has been successfully rebuilt.")
 }
 
 func addToDb(key, value string) error {

@@ -81,6 +81,39 @@ func (hi *HashIndex) FlushToFile() error {
 	return nil
 }
 
+func (hi *HashIndex) RebuildIndexFromFile(filename string) error {
+	newHashIndex := make(map[string]int64)
+
+	fd, err := os.Open(filename)
+	defer fd.Close()
+	if err != nil {
+		return err
+	}
+
+	reader := bufio.NewScanner(fd)
+	offset := int64(0)
+
+	for reader.Scan() {
+		line := reader.Text()
+
+		split := strings.Split(line, splitString)
+
+		if len(split) != 2 {
+			return errors.New("error parsing database file")
+		}
+
+		key := split[0]
+
+		newHashIndex[key] = offset
+
+		offset += int64(len(reader.Bytes()) + len([]byte("\n")))
+	}
+
+	hi.index = newHashIndex
+
+	return nil
+}
+
 func (hi *HashIndex) GetOffset(key string) (int64, bool) {
 	value, isOk := hi.index[key]
 
