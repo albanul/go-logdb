@@ -9,11 +9,6 @@ import (
 	"strings"
 )
 
-type KeyValue struct {
-	key   string
-	value string
-}
-
 const (
 	databaseFilename = "database"
 )
