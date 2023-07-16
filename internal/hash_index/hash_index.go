@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+const splitString = ","
+
 type HashIndex struct {
 	filename string
 	index    map[string]int64
@@ -38,7 +40,7 @@ func NewFromFile(filePath string) (*HashIndex, error) {
 
 		s := scanner.Text()
 
-		split := strings.Split(s, ",")
+		split := strings.Split(s, splitString)
 
 		if len(split) != 2 {
 			return nil, errors.New("error parsing index file")
