@@ -14,6 +14,10 @@ type KeyValue struct {
 	value string
 }
 
+const (
+	databaseFilename = "database"
+)
+
 var (
 	KeyNotFoundError = errors.New("key was not found")
 	HashIndex        *hash_index.HashIndex
@@ -114,7 +118,7 @@ func getFromDbOption() {
 }
 
 func addToDb(key, value string) error {
-	file, err := os.OpenFile("database", os.O_CREATE|os.O_WRONLY, 0755)
+	file, err := os.OpenFile(databaseFilename, os.O_CREATE|os.O_WRONLY, 0755)
 	defer file.Close()
 	if err != nil {
 		return err
@@ -151,7 +155,7 @@ func addToDb(key, value string) error {
 }
 
 func getFromDb(key string) (value string, err error) {
-	file, err := os.OpenFile("database", os.O_RDONLY, 0755)
+	file, err := os.OpenFile(databaseFilename, os.O_RDONLY, 0755)
 	defer file.Close()
 
 	offset, ok := HashIndex.GetOffset(key)
