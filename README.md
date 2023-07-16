@@ -14,7 +14,7 @@ append-only file-based database. This database is designed to efficiently store 
 - [ ] Database compaction
 - [ ] Delete a record
 - [x] Store index on a disk
-- [ ] Index rebuild
+- [x] Index rebuild
 - [ ] Partially written records
 - [ ] Concurrency control
 
