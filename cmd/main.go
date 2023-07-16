@@ -128,6 +128,16 @@ func rebuildHashIndexOption() {
 		return
 	}
 	fmt.Println("The index has been successfully rebuilt.")
+	fmt.Println()
+
+	fmt.Println("Flash hash index to file...")
+	err = HashIndex.FlushToFile()
+	if err != nil {
+		fmt.Println("Something went wrong! Please start over.")
+		return
+	}
+	fmt.Println("Successfully flashed hash index to file.")
+	fmt.Println()
 }
 
 func addToDb(key, value string) error {
