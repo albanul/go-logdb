@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/albanul/go-logdb/internal/hash_index"
+	"github.com/albanul/go-logdb/internal/screen_cleaner"
 	"os"
 	"strings"
 )
@@ -28,6 +29,7 @@ func main() {
 	HashIndex = hi
 
 	for {
+		screen_cleaner.ClearScreen()
 		fmt.Println("Please select an option:")
 		fmt.Println("1. insert a new record")
 		fmt.Println("2. get a record by a key")
@@ -59,6 +61,9 @@ func main() {
 		if breakTheLoop {
 			break
 		}
+
+		fmt.Print("Press enter to continue...")
+		fmt.Scanln()
 	}
 
 	fmt.Println("Good bye!")
@@ -112,7 +117,7 @@ func getFromDbOption() {
 		return
 	}
 
-	fmt.Printf("%v\n\n", value)
+	fmt.Printf("Value: %v\n\n", value)
 }
 
 func rebuildHashIndexOption() {
@@ -131,8 +136,7 @@ func rebuildHashIndexOption() {
 		fmt.Println("Something went wrong! Please start over.")
 		return
 	}
-	fmt.Println("Successfully flashed hash index to file.")
-	fmt.Println()
+	fmt.Printf("Successfully flashed hash index to file.\n\n")
 }
 
 func addToDb(key, value string) error {
